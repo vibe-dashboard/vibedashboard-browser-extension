@@ -85,15 +85,31 @@ jobs:
           if-no-files-found: error
 
       - name: Publish continuous prerelease
-        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # pin@v2
-        with:
-          tag_name: ${{ steps.meta.outputs.tag }}
-          name: ${{ steps.meta.outputs.release_name }}
-          body: ${{ steps.meta.outputs.notes }}
-          prerelease: true
-          make_latest: false
-          target_commitish: ${{ github.sha }}
-          files: |
-            build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-chrome-mv3.zip
-            build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-firefox-mv3.zip
-          overwrite_files: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.meta.outputs.tag }}
+          RELEASE_NAME: ${{ steps.meta.outputs.release_name }}
+          RELEASE_NOTES: ${{ steps.meta.outputs.notes }}
+          CHROME_ASSET: build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-chrome-mv3.zip
+          FIREFOX_ASSET: build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-firefox-mv3.zip
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release edit "$RELEASE_TAG" \
+              --title "$RELEASE_NAME" \
+              --notes "$RELEASE_NOTES" \
+              --prerelease \
+              --target "$GITHUB_SHA" \
+              --latest=false
+          else
+            gh release create "$RELEASE_TAG" \
+              --title "$RELEASE_NAME" \
+              --notes "$RELEASE_NOTES" \
+              --prerelease \
+              --target "$GITHUB_SHA" \
+              --latest=false
+          fi
+
+          gh release upload "$RELEASE_TAG" "$CHROME_ASSET" "$FIREFOX_ASSET" --clobber
