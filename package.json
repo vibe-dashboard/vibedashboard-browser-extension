@@ -1,10 +1,10 @@
 {
-    "name": "ona",
-    "displayName": "Ona",
+    "name": "vibe-dashboard-browser-extension",
+    "displayName": "Vibe Dashboard",
     "version": "2.5.5",
-    "description": "Ona is your mission control for serious software projects and parallel coding agents.",
-    "author": "Ona <info@ona.com>",
-    "homepage": "https://ona.com",
+    "description": "Open GitHub pages in your Vibe Dashboard server.",
+    "author": "Vibe Dashboard",
+    "homepage": "https://github.com/gitpod-io/browser-extension",
     "scripts": {
         "dev": "plasmo dev --source-maps --no-minify",
         "watch-dev": "pnpm build-dev-tools && .bin/watch-sync serve ./build/chrome-mv3-dev",

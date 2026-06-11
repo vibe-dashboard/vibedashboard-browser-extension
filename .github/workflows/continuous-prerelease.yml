@@ -1,0 +1,99 @@
+name: Continuous prerelease extension build
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: continuous-prerelease-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package-extension:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # pin@v5
+
+      - uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # pin@v4
+        with:
+          version: 11.5.2
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # pin@v5
+        with:
+          node-version: 20.x
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run targeted utility tests
+        run: >
+          node
+          ./node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.3.96_@swc+helpers@0.5.1__@types+node@20.14.5_typescript@5.5.4/node_modules/ts-node/dist/bin-esm.js
+          ./node_modules/.pnpm/mocha@11.1.0/node_modules/mocha/bin/mocha.js
+          src/utils/build-vd-open-url.spec.ts
+
+      - name: Build and package Chrome extension
+        run: |
+          pnpm build --target=chrome-mv3
+          pnpm package --target=chrome-mv3
+
+      - name: Build and package Firefox extension
+        run: |
+          pnpm build --target=firefox-mv3
+          pnpm package --target=firefox-mv3
+
+      - name: Compute release metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          safe_branch="${GITHUB_REF_NAME//\//-}"
+          echo "safe_branch=$safe_branch" >> "$GITHUB_OUTPUT"
+          echo "tag=continuous-${safe_branch}" >> "$GITHUB_OUTPUT"
+          echo "release_name=Continuous prerelease (${GITHUB_REF_NAME})" >> "$GITHUB_OUTPUT"
+
+          chrome_asset="vibe-dashboard-browser-extension-${safe_branch}-chrome-mv3.zip"
+          firefox_asset="vibe-dashboard-browser-extension-${safe_branch}-firefox-mv3.zip"
+
+          cp build/chrome-mv3-prod.zip "build/${chrome_asset}"
+          cp build/firefox-mv3-prod.zip "build/${firefox_asset}"
+
+          {
+            echo "notes<<EOF"
+            echo "Latest automated extension build for branch \`${GITHUB_REF_NAME}\`."
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Workflow run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Assets:"
+            echo "  - ${chrome_asset}"
+            echo "  - ${firefox_asset}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4
+        with:
+          name: extension-packages-${{ steps.meta.outputs.safe_branch }}
+          path: |
+            build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-chrome-mv3.zip
+            build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-firefox-mv3.zip
+          if-no-files-found: error
+
+      - name: Publish continuous prerelease
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # pin@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.release_name }}
+          body: ${{ steps.meta.outputs.notes }}
+          prerelease: true
+          make_latest: false
+          target_commitish: ${{ github.sha }}
+          files: |
+            build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-chrome-mv3.zip
+            build/vibe-dashboard-browser-extension-${{ steps.meta.outputs.safe_branch }}-firefox-mv3.zip
+          overwrite_files: true

@@ -1,6 +1,6 @@
-import isUrl from "validator/es/lib/isURL";
+import isUrl from "validator/es/lib/isURL.js";
 
-const allowedProtocols = ["http:", "https:", "gitpod:"];
+const allowedProtocols = ["http:", "https:"];
 
 export const parseEndpoint = (input: string): string => {
     let url: URL;
@@ -11,7 +11,7 @@ export const parseEndpoint = (input: string): string => {
         if (!allowedProtocols.includes(url.protocol)) {
             throw new TypeError(`Invalid protocol in URL: ${input}`);
         }
-    } else if (isUrl(input, { require_protocol: false, protocols: ["http", "https", "gitpod"] })) {
+    } else if (isUrl(input, { require_protocol: false, protocols: ["http", "https"] })) {
         url = new URL(`https://${input}`);
     } else {
         throw new TypeError(`Invalid URL: ${input}`);

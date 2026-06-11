@@ -1,101 +1,39 @@
-# Ona Browser extension
+# Vibe Dashboard browser extension
 
-[![Setup Automated](https://img.shields.io/badge/setup-automated-blue?logo=gitpod)](https://app.ona.com/#https://github.com/gitpod-io/browser-extension)
+This fork adapts the Gitpod/Ona browser extension for **Vibe Dashboard**.
 
-This is the browser extension for Ona. It supports Chrome (see [Chrome Web Store](https://chrome.google.com/webstore/detail/dodmmooeoklaejobgleioelladacbeki/)), Firefox (see [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/gitpod/)) and Edge (see [how to install Chrome extensions](https://support.microsoft.com/help/4538971/microsoft-edge-add-or-remove-extensions)), and adds an **Ona** button to the configured GitLab, GitHub, Bitbucket and Azure DevOps installations (defaults to `gitlab.com`, `github.com`, `bitbucket.org` and `dev.azure.com`) which immediately creates an Ona environment for the current git context:
+The extension injects an **Open in VD** button into supported GitHub pages and sends the current page URL to your configured Vibe Dashboard server using:
+
+```text
+/dashboard?from_gh_url=<encoded current GitHub URL>
+```
+
+The server origin is configurable in the extension popup, so each user can point the extension at their own VD deployment.
 
 ![Gitpodify](./docs/github-injected.png "Gitpodify")
 
-### Issues
-
-We are currently tracking all issues related to the browser extension in the [`gitpod-io/gitpod`](https://github.com/gitpod-io/gitpod) repository.
-You can use the [`component: browser-extension`](https://github.com/gitpod-io/gitpod/issues?q=is%3Aissue+is%3Aopen+extension+label%3A%22component%3A+browser-extension%22) label to search for relevant issues including feature proposals and bug reports.
-
 ### Development
 
-To make changes and test them using Ona itself:
-
--   add test cases to the [unit test](https://github.com/gitpod-io/browser-extension/blob/se/plasmo/test/src/button-contributions.spec.ts#L39)
--   try out changes like this:
-    1. run `pnpm build`
-    1. run `pnpm watch-prod` and download the built binary for your system (local machine)
-    1. run the binary anywhere on your local machine to sync the extension folder locally.
-    1. open Chrome and go to `chrome://extensions/`
-    1. enable `Developer mode` (top right)
-    1. click `Load unpacked` (top left) and select the folder you just downloaded
-    1. now you can test your changes
-    1. repeat step 1 and 2 and [reload the extension](chrome://extensions/) whenever you want to test new changes
-
-Or, when developing locally, you can execute the following to enable hot reloading with the extension in Chrome:
-
-```
-pnpm dev
-```
-
-Then, `Load unpacked` the `build/chrome-mv3-dev` folder in Chrome and after making changes, pages will reload automatically and the changes will be reflected immediately.
-
-#### Build
-
-The build happens automatically when you start a workspace but if you want to build explicitly, use these commands:
+Build and load locally:
 
 ```
 pnpm install
+pnpm dev
+```
+
+Then load `build/chrome-mv3-dev` as an unpacked extension in Chrome.
+
+To build production bundles:
+
+```
 pnpm build --target=chrome-mv3 # or --target=firefox-mv3
 pnpm package --target=chrome-mv3 # or --target=firefox-mv3
 ```
 
 ### Testing
 
-You can test the extension without publishing to the store. Before uploading the bundle to the browser, make sure to [build](#build) the code, then follow these steps:
+Run targeted unit tests:
 
-#### For Chrome
-
-1. Open Chrome
-2. Click Settings -> Extensions -> Load unpacked (if you don't see this option, ensure you have <kbd>Developer mode</kbd> toggled on)
-3. Select the `chrome-mv3-prod` folder inside of `build/`
-
-#### For Firefox
-
-1. Open Firefox
-1. Go to `about:debugging#/runtime/this-firefox`
-1. Click Load Temporary Add-on -> Select the `firefox-mv3-prod.zip` file. Please note, that some features (like extension settings) will not work.
-
-## Release
-
-We currently publish the extension for **Chrome** and **Firefox**.
-
-To release a new version, follow these steps:
-
-1. Bump up the version value inside `package.json` (`yarn version --patch` or `yarn version --minor`)
-1. Push your changes to `main`
-1. Compose a list of changes using the list of commits that were pushed since last version
-1. [Create a new release](https://github.com/gitpod-io/browser-extension/releases/new), listing changes:
-
-    ```yaml
-    ### Changes
-
-    - Change/Fix A
-    - Change/Fix B
-    - Change/Fix C
-
-    ### Credits
-
-    Thanks to @{EXTERNAL_CONTRIBUTOR_USERNAME} for helping! 🍊
-    ```
-
-For Firefox:
-
-1. Sign in to our [Mozilla Add-On management page](https://addons.mozilla.org/en-US/developers/addon/onahq/edit) with the credentials from 1Password
-2. Click <kbd>Upload new version</kbd>
-3. Upload the zip file (`firefox-mv3-prod.zip`)
-4. Go through the steps and submit
-
-For Chrome:
-
-1. Using your Google account, open the [`gitpod-browser-extension Google Group`](https://groups.google.com/g/gitpod-browser-extension)
-1. If you don't have access, reach out for [help in Slack](https://gitpod.slack.com/archives/C04QC1ZMPV4)
-   * An existing member of the group, who is also Verified (paid the $5 for verification) on the Chrome Webstore needs to [sync the group members in the webstore](https://chrome.google.com/webstore/devconsole/11ad35cc-5b54-416a-a789-f091e1007648/settings)
-1. Navigate to the [Chrome Webstore console](https://chrome.google.com/webstore/devconsole/11ad35cc-5b54-416a-a789-f091e1007648), make sure you switch the `publisher` to `Gitpod`
-1. Click "Upload new package"
-1. Upload the zip file (`chrome-mv3-prod.zip`) and submit
-1. Wait a few hours for the review to happen!
+```bash
+node ./node_modules/.pnpm/ts-node@10.9.2_@swc+core@1.3.96_@swc+helpers@0.5.1__@types+node@20.14.5_typescript@5.5.4/node_modules/ts-node/dist/bin-esm.js ./node_modules/.pnpm/mocha@11.1.0/node_modules/mocha/bin/mocha.js src/utils/build-vd-open-url.spec.ts
+```

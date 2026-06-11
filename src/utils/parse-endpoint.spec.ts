@@ -1,18 +1,19 @@
 import { expect } from "chai";
-import { hostToOrigin, parseEndpoint } from "./parse-endpoint";
+
+import { hostToOrigin, parseEndpoint } from "./parse-endpoint.ts";
 
 describe("parseEndpoint", () => {
     it("parses valid hosts", () => {
-        expect(parseEndpoint("https://gitpod.io/new")).to.equal("https://gitpod.io");
-        expect(parseEndpoint("gitpod.io")).to.equal("https://gitpod.io");
-        expect(parseEndpoint("gitpod.io/new")).to.equal("https://gitpod.io");
-        expect(parseEndpoint("gitpod://")).to.equal("gitpod://");
+        expect(parseEndpoint("https://dash.example.com/dashboard")).to.equal("https://dash.example.com");
+        expect(parseEndpoint("dash.example.com")).to.equal("https://dash.example.com");
+        expect(parseEndpoint("dash.example.com/dashboard")).to.equal("https://dash.example.com");
         expect(parseEndpoint("http://localhost:3000")).to.equal("http://localhost:3000");
     });
 
     it("does not parse invalid hosts", () => {
-        expect(() => parseEndpoint("gitpod")).to.throw(TypeError);
-        expect(() => parseEndpoint("ftp://gitpod.io")).to.throw(TypeError);
+        expect(() => parseEndpoint("vibe-dashboard")).to.throw(TypeError);
+        expect(() => parseEndpoint("gitpod://")).to.throw(TypeError);
+        expect(() => parseEndpoint("ftp://dash.example.com")).to.throw(TypeError);
         expect(() => parseEndpoint("https://")).to.throw(TypeError);
     });
 });
@@ -24,7 +25,6 @@ describe("hostToOrigin", () => {
     });
 
     it("does not convert invalid hosts", () => {
-        expect(hostToOrigin("ftp://gitpod.io")).to.be.undefined;
-        expect(hostToOrigin("gitpod://")).to.be.undefined;
+        expect(hostToOrigin("ftp://dash.example.com")).to.be.undefined;
     });
 });

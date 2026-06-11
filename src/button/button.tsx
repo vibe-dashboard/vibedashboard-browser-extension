@@ -1,12 +1,15 @@
-import { useStorage } from "@plasmohq/storage/hook";
 import classNames from "classnames";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { DEFAULT_ONA_ENDPOINT, EVENT_CURRENT_URL_CHANGED } from "~constants";
+
+import { useStorage } from "@plasmohq/storage/hook";
+
+import { DEFAULT_VD_ENDPOINT, EVENT_CURRENT_URL_CHANGED } from "~constants";
 import { OnaLettermark } from "~icons/OnaLettermark";
-import { STORAGE_KEY_ADDRESS, STORAGE_KEY_ALWAYS_OPTIONS, STORAGE_KEY_NEW_TAB } from "~storage";
+import { STORAGE_KEY_ADDRESS, STORAGE_KEY_NEW_TAB } from "~storage";
+import { buildVdOpenUrl } from "~utils/build-vd-open-url";
+
 import type { SupportedApplication } from "./button-contributions";
-import { CaretForProvider } from "./CaretForProvider";
 
 type Props = {
     application: SupportedApplication;
@@ -14,10 +17,8 @@ type Props = {
     urlTransformer?: (url: string) => string;
 };
 export const OnaButton = ({ application, additionalClassNames, urlTransformer }: Props) => {
-    const [address] = useStorage<string>(STORAGE_KEY_ADDRESS, DEFAULT_ONA_ENDPOINT);
+    const [address] = useStorage<string>(STORAGE_KEY_ADDRESS, DEFAULT_VD_ENDPOINT);
     const [openInNewTab] = useStorage<boolean>(STORAGE_KEY_NEW_TAB, true);
-    const [disableAutostart] = useStorage<boolean>(STORAGE_KEY_ALWAYS_OPTIONS, false);
-    const [showDropdown, setShowDropdown] = useState(false);
     const [currentHref, setCurrentHref] = useState(window.location.href);
 
     const linkRef = useRef<HTMLAnchorElement | null>(null);
@@ -36,57 +37,32 @@ export const OnaButton = ({ application, additionalClassNames, urlTransformer }:
 
     const actions = useMemo(() => {
         const parsedHref = !urlTransformer ? currentHref : urlTransformer(currentHref);
+        const href = buildVdOpenUrl({
+            dashboardOrigin: address,
+            githubUrl: parsedHref,
+        });
 
         return [
             {
-                href: `${address}/?autostart=${disableAutostart ? "false" : "true"}#${parsedHref}`,
-                label: "Open",
-            },
-            {
-                href: `${address}/?autostart=false#${parsedHref}`,
-                label: "Open with options...",
+                href,
+                label: "Open in VD",
             },
         ];
-    }, [address, disableAutostart, currentHref, urlTransformer]);
-    const dropdownRef = useRef<HTMLDivElement | null>(null);
-    const firstActionRef = useRef<HTMLAnchorElement | null>(null);
+    }, [address, currentHref, urlTransformer]);
 
     const target = openInNewTab ? "_blank" : "_self";
-
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown);
-    };
-
-    const handleDocumentClick = (event: Event) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-            setShowDropdown(false);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener("click", handleDocumentClick);
-        return () => {
-            document.removeEventListener("click", handleDocumentClick);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (showDropdown && firstActionRef.current) {
-            firstActionRef.current.focus();
-        }
-    }, [showDropdown]);
 
     useHotkeys("alt+g", () => linkRef.current?.click(), [linkRef.current]);
 
     return (
         <div
             id="ona-btn-nav"
-            title={`Open with "Ona"`}
+            title={`Open in Vibe Dashboard`}
             className={classNames("ona-button", application, ...(additionalClassNames ?? []))}
         >
             <div className={classNames("button")}>
                 <a
-                    className={classNames("button-part", disableAutostart ? "action-no-options" : "action")}
+                    className={classNames("button-part", "action-no-options")}
                     href={actions[0].href}
                     target={target}
                     rel="noreferrer"
@@ -97,43 +73,7 @@ export const OnaButton = ({ application, additionalClassNames, urlTransformer }:
                         {actions[0].label}
                     </span>
                 </a>
-                {!disableAutostart && (
-                    <button
-                        className={classNames("button-part", "action-chevron")}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleDropdown();
-                        }}
-                    >
-                        <CaretForProvider provider={application} />
-                    </button>
-                )}
             </div>
-
-            {showDropdown && (
-                <div
-                    ref={dropdownRef}
-                    className={classNames("drop-down")}
-                    onKeyDown={(e) => {
-                        if (e.key === "Escape") {
-                            setShowDropdown(false);
-                        }
-                    }}
-                >
-                    {actions.slice(1).map((action) => (
-                        <a
-                            key={action.label}
-                            ref={action === actions[1] ? firstActionRef : null}
-                            className={classNames("drop-down-action", "button-part")}
-                            href={action.href}
-                            target={target}
-                            rel="noreferrer"
-                        >
-                            <span className={classNames("drop-down-label")}>{action.label}</span>
-                        </a>
-                    ))}
-                </div>
-            )}
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import cssText from "data-text:../button/button.css";
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from "plasmo";
 import React, { type ReactElement } from "react";
+
 import { EVENT_CURRENT_URL_CHANGED } from "~constants";
 
 import { OnaButton } from "../button/button";
@@ -8,7 +9,7 @@ import { buttonContributions, isSiteSuitable, type ButtonContributionParams } fr
 
 // keep in sync with DEFAULT_HOSTS in src/button/button-contributions.ts
 export const config: PlasmoCSConfig = {
-    matches: ["https://github.com/*", "https://gitlab.com/*", "https://bitbucket.org/*", "https://dev.azure.com/*"],
+    matches: ["https://github.com/*"],
 };
 
 export const getStyle = () => {
