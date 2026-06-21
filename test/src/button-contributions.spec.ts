@@ -10,7 +10,7 @@ describe("Platform match tests", function () {
 
     before(async function () {
         browser = await puppeteer.launch({
-            headless: "new",
+            headless: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -75,7 +75,7 @@ describe("Query Selector Tests", function () {
 
     before(async function () {
         browser = await puppeteer.launch({
-            headless: "new",
+            headless: true,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -96,7 +96,8 @@ describe("Query Selector Tests", function () {
 
     async function resolveSelector(page: Page, selector: string) {
         if (selector.startsWith("xpath:")) {
-            return (await page.$x(selector.slice(6)))[0] || null;
+            const elements = await page.$$(`::-p-xpath(${selector.slice(6)})`);
+            return elements[0] || null;
         } else {
             return page.$(selector);
         }
