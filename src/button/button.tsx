@@ -69,8 +69,9 @@ export const OnaButton = ({ application, additionalClassNames, urlTransformer }:
                     ref={linkRef}
                 >
                     <span className={classNames("action-label")}>
-                        🤙
                         {actions[0].label}
+                        {' '}
+                        🤙
                     </span>
                 </a>
             </div>
