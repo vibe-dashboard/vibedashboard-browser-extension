@@ -54,8 +54,14 @@ jobs:
           set -euo pipefail
           safe_branch="${GITHUB_REF_NAME//\//-}"
           echo "safe_branch=$safe_branch" >> "$GITHUB_OUTPUT"
-          echo "tag=continuous-${safe_branch}" >> "$GITHUB_OUTPUT"
-          echo "release_name=Continuous prerelease (${GITHUB_REF_NAME})" >> "$GITHUB_OUTPUT"
+          echo "tag=continuous-${safe_branch}-${GITHUB_SHA:0:8}" >> "$GITHUB_OUTPUT"
+
+          commit_subject=$(git log -1 --pretty=%s | cut -c1-100)
+          {
+            echo "release_name<<EOF"
+            echo "${commit_subject}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
           chrome_asset="vibe-dashboard-browser-extension-${safe_branch}-chrome-mv3.zip"
           firefox_asset="vibe-dashboard-browser-extension-${safe_branch}-firefox-mv3.zip"
