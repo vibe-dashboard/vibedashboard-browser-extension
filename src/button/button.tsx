@@ -45,14 +45,14 @@ export const OnaButton = ({ application, additionalClassNames, urlTransformer }:
         return [
             {
                 href,
-                label: "Open in VD",
+                label: "Vibe",
             },
         ];
     }, [address, currentHref, urlTransformer]);
 
     const target = openInNewTab ? "_blank" : "_self";
 
-    useHotkeys("alt+g", () => linkRef.current?.click(), [linkRef.current]);
+    // useHotkeys("alt+g", () => linkRef.current?.click(), [linkRef.current]);
 
     return (
         <div
@@ -69,7 +69,7 @@ export const OnaButton = ({ application, additionalClassNames, urlTransformer }:
                     ref={linkRef}
                 >
                     <span className={classNames("action-label")}>
-                        <OnaLettermark className={classNames("action-logo")} width={14} height={14} />
+                        🤙
                         {actions[0].label}
                     </span>
                 </a>
