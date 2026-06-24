@@ -41,3 +41,11 @@ key*.json
 
 # typescript
 .tsbuildinfo
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+.beads
+
+tsconfig.tsbuildinfo
