@@ -10,7 +10,7 @@ describe("buildVdOpenUrl", () => {
                 githubUrl: "https://github.com/octocat/Hello-World/pull/1",
             }),
         ).to.equal(
-            "https://dash.example.com/dashboard?from_gh_url=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Fpull%2F1",
+            "https://dash.example.com/dashboard?open_from_github=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Fpull%2F1",
         );
     });
 
@@ -21,7 +21,7 @@ describe("buildVdOpenUrl", () => {
                 githubUrl: "https://github.com/octocat/Hello-World/tree/feature%2Fbranch",
             }),
         ).to.equal(
-            "http://localhost:3001/dashboard?from_gh_url=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Ftree%2Ffeature%252Fbranch",
+            "http://localhost:3001/dashboard?open_from_github=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Ftree%2Ffeature%252Fbranch",
         );
     });
 });

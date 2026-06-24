@@ -6,6 +6,6 @@ export interface BuildVdOpenUrlArgs {
 export const buildVdOpenUrl = ({ dashboardOrigin, githubUrl }: BuildVdOpenUrlArgs): string => {
     const origin = dashboardOrigin.endsWith("/") ? dashboardOrigin.slice(0, -1) : dashboardOrigin;
     const url = new URL(`${origin}/dashboard`);
-    url.searchParams.set("from_gh_url", githubUrl);
+    url.searchParams.set("open_from_github", githubUrl);
     return url.toString();
 };
