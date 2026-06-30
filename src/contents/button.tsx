@@ -9,7 +9,7 @@ import { buttonContributions, isSiteSuitable, type ButtonContributionParams } fr
 
 // keep in sync with DEFAULT_HOSTS in src/button/button-contributions.ts
 export const config: PlasmoCSConfig = {
-    matches: ["https://github.com/*"],
+    matches: ["https://github.com/*", "https://*.atlassian.net/*"],
 };
 
 export const getStyle = () => {

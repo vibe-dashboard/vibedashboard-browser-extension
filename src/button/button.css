@@ -335,6 +335,27 @@
     );
 }
 
+.jira {
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, "Fira Sans",
+        "Droid Sans", "Helvetica Neue", sans-serif;
+    --line-height: 20px;
+    --font-size: 14px;
+    --font-weight: 500;
+    --border-radius: 3px;
+    --border-width: 0;
+
+    --primary-bg-color: var(--ds-background-brand-bold, #0c66e4);
+    --primary-hover-bg-color: var(--ds-background-brand-bold-hovered, #0055cc);
+    --primary-border-color: transparent;
+    --primary-hover-border-color: transparent;
+    --primary-color: var(--ds-text-inverse, #ffffff) !important;
+    --primary-hover-color: var(--ds-text-inverse, #ffffff) !important;
+    --primary-box-shadow: none;
+    --primary-hover-box-shadow: none;
+    --primary-height: 32px;
+    --primary-separator-color: var(--ds-text-inverse, #ffffff) !important;
+}
+
 .azure-devops {
     --font-family: "Segoe UI", "-apple-system", BlinkMacSystemFont, Roboto, "Helvetica Neue", Helvetica, Ubuntu, Arial,
         sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";

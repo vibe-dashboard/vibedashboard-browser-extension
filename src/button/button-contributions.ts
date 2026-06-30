@@ -3,7 +3,7 @@
  * Happy about anyone who's able to make this work with imports (i.e. run the tests in this project), but I couldn't figure it out and gave up.
  */
 
-export type SupportedApplication = "github" | "gitlab" | "bitbucket-server" | "bitbucket" | "azure-devops";
+export type SupportedApplication = "github" | "gitlab" | "bitbucket-server" | "bitbucket" | "azure-devops" | "jira";
 
 const resolveMetaAppName = (head: HTMLHeadElement): string | undefined => {
     const metaApplication = head.querySelector("meta[name=application-name]");
@@ -25,7 +25,7 @@ export const DEFAULT_HOSTS = ["github.com", "gitlab.com", "bitbucket.org", "dev.
  */
 export const isSiteSuitable = (): boolean => {
     const isWhitelistedHost = DEFAULT_HOSTS.some((host) => location.host === host);
-    if (isWhitelistedHost) {
+    if (isWhitelistedHost || location.hostname.endsWith(".atlassian.net")) {
         return true;
     }
 
@@ -127,6 +127,17 @@ function createContainerElement(
 }
 
 export const buttonContributions: ButtonContributionParams[] = [
+    // Jira
+    {
+        id: "jira-project-view-navigation",
+        exampleUrls: [
+            // Requires a Jira Cloud workspace, e.g. "https://example.atlassian.net/jira/software/projects/ABC/boards/1"
+        ],
+        selector: `xpath://*[@id="ak-project-view-navigation"]/div/div/div[2]/div[3]`,
+        containerElement: createContainerElement("div", { marginLeft: "8px" }),
+        application: "jira",
+    },
+
     // Azure DevOps
     {
         id: "ado-repo",
