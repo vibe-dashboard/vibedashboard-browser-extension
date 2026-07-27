@@ -39,7 +39,7 @@ export const OnaButton = ({ application, additionalClassNames, urlTransformer }:
         const parsedHref = !urlTransformer ? currentHref : urlTransformer(currentHref);
         const href = buildVdOpenUrl({
             dashboardOrigin: address,
-            githubUrl: parsedHref,
+            externalViewUrl: parsedHref,
         });
 
         return [

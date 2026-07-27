@@ -5,7 +5,7 @@ This fork adapts the Gitpod/Ona browser extension for **Vibe Dashboard**.
 The extension injects a **Vibe** button into supported GitHub pages and sends the current page URL to your configured Vibe Dashboard server using:
 
 ```text
-/dashboard?open_from_github=<encoded current GitHub URL>
+/dashboard?external_view_url=<encoded current page URL>
 ```
 
 The server origin is configurable in the extension popup, so each user can point the extension at their own VD deployment.

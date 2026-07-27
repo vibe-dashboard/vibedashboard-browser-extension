@@ -3,14 +3,14 @@ import { expect } from "chai";
 import { buildVdOpenUrl } from "./build-vd-open-url.ts";
 
 describe("buildVdOpenUrl", () => {
-    it("builds the dashboard open-from-github url", () => {
+    it("builds the dashboard external view url", () => {
         expect(
             buildVdOpenUrl({
                 dashboardOrigin: "https://dash.example.com",
-                githubUrl: "https://github.com/octocat/Hello-World/pull/1",
+                externalViewUrl: "https://github.com/octocat/Hello-World/pull/1",
             }),
         ).to.equal(
-            "https://dash.example.com/dashboard?open_from_github=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Fpull%2F1",
+            "https://dash.example.com/dashboard?external_view_url=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Fpull%2F1",
         );
     });
 
@@ -18,10 +18,10 @@ describe("buildVdOpenUrl", () => {
         expect(
             buildVdOpenUrl({
                 dashboardOrigin: "http://localhost:3001/",
-                githubUrl: "https://github.com/octocat/Hello-World/tree/feature%2Fbranch",
+                externalViewUrl: "https://github.com/octocat/Hello-World/tree/feature%2Fbranch",
             }),
         ).to.equal(
-            "http://localhost:3001/dashboard?open_from_github=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Ftree%2Ffeature%252Fbranch",
+            "http://localhost:3001/dashboard?external_view_url=https%3A%2F%2Fgithub.com%2Foctocat%2FHello-World%2Ftree%2Ffeature%252Fbranch",
         );
     });
 });

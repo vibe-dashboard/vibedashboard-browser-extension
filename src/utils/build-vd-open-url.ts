@@ -1,11 +1,11 @@
 export interface BuildVdOpenUrlArgs {
     dashboardOrigin: string;
-    githubUrl: string;
+    externalViewUrl: string;
 }
 
-export const buildVdOpenUrl = ({ dashboardOrigin, githubUrl }: BuildVdOpenUrlArgs): string => {
+export const buildVdOpenUrl = ({ dashboardOrigin, externalViewUrl }: BuildVdOpenUrlArgs): string => {
     const origin = dashboardOrigin.endsWith("/") ? dashboardOrigin.slice(0, -1) : dashboardOrigin;
     const url = new URL(`${origin}/dashboard`);
-    url.searchParams.set("open_from_github", githubUrl);
+    url.searchParams.set("external_view_url", externalViewUrl);
     return url.toString();
 };
